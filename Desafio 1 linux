@@ -1,0 +1,42 @@
+#!/bin/bash
+
+criar_grupo() {
+    grupo=$1
+    if ! getent group $grupo > /dev/null 2>&1; then
+        groupadd $grupo
+    fi
+}
+
+criar_usuario() {
+    usuario=$1
+    grupo=$2
+    home_dir=$3
+    if ! id -u $usuario > /dev/null 2>&1; then
+        useradd -m -g $grupo -d $home_dir $usuario
+    fi
+}
+
+criar_diretorio() {
+    dir=$1
+    perm=$2
+    owner=$3
+    if [ ! -d "$dir" ]; then
+        mkdir -p $dir
+        chown $owner:$owner $dir
+        chmod $perm $dir
+    fi
+}
+
+criar_grupo "admin"
+criar_grupo "dev"
+criar_grupo "financeiro"
+
+criar_usuario "alice" "admin" "/home/alice"
+criar_usuario "bob" "dev" "/home/bob"
+criar_usuario "carla" "financeiro" "/home/carla"
+
+criar_diretorio "/home/alice/projetos" "750" "alice"
+criar_diretorio "/home/alice/docs" "750" "alice"
+criar_diretorio "/home/bob/projetos" "750" "bob"
+criar_diretorio "/home/bob/docs" "750" "bob"
+criar_diretorio "/home/carla/financas" "750" "carla"
