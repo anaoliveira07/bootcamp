@@ -3,7 +3,7 @@ essa atividade eu não entendi como poderia subila aqui. mas aqui está o que fi
 - conteúdo do arquivo Vagrantfile
 
 Vagrant.configure("2") do |config|
-  # Definindo a máquina master
+  
   config.vm.define "master" do |master|
     master.vm.box = "ubuntu/bionic64"
     master.vm.network "private_network", type: "dhcp", ip: "192.168.50.10"
@@ -11,7 +11,7 @@ Vagrant.configure("2") do |config|
       vb.memory = "1024"
     end
 
-    # Instalando o Docker no master
+   
     master.vm.provision "shell", inline: <<-SHELL
       apt-get update
       apt-get install -y docker.io
@@ -21,7 +21,7 @@ Vagrant.configure("2") do |config|
     SHELL
   end
 
-  # Definindo o node01
+ 
   config.vm.define "node01" do |node01|
     node01.vm.box = "ubuntu/bionic64"
     node01.vm.network "private_network", type: "dhcp", ip: "192.168.50.11"
@@ -29,7 +29,7 @@ Vagrant.configure("2") do |config|
       vb.memory = "1024"
     end
 
-    # Instalando o Docker e adicionando ao Swarm
+   
     node01.vm.provision "shell", inline: <<-SHELL
       apt-get update
       apt-get install -y docker.io
@@ -39,7 +39,7 @@ Vagrant.configure("2") do |config|
     SHELL
   end
 
-  # Definindo o node02
+  
   config.vm.define "node02" do |node02|
     node02.vm.box = "ubuntu/bionic64"
     node02.vm.network "private_network", type: "dhcp", ip: "192.168.50.12"
@@ -47,7 +47,7 @@ Vagrant.configure("2") do |config|
       vb.memory = "1024"
     end
 
-    # Instalando o Docker e adicionando ao Swarm
+   
     node02.vm.provision "shell", inline: <<-SHELL
       apt-get update
       apt-get install -y docker.io
@@ -57,7 +57,7 @@ Vagrant.configure("2") do |config|
     SHELL
   end
 
-  # Definindo o node03
+ 
   config.vm.define "node03" do |node03|
     node03.vm.box = "ubuntu/bionic64"
     node03.vm.network "private_network", type: "dhcp", ip: "192.168.50.13"
@@ -65,7 +65,7 @@ Vagrant.configure("2") do |config|
       vb.memory = "1024"
     end
 
-    # Instalando o Docker e adicionando ao Swarm
+    
     node03.vm.provision "shell", inline: <<-SHELL
       apt-get update
       apt-get install -y docker.io
