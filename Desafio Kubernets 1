@@ -1,0 +1,57 @@
+Script:
+
+#!/bin/bash
+
+PROJECT_ID="minha-aplicacao-gcp"
+REGION="southamerica-east1"
+CLUSTER_NAME="app-cluster"
+ZONE="southamerica-east1-b"
+APP_NAME="web-application"
+IMAGE_NAME="web-app-image"
+GCR_PATH="gcr.io/$PROJECT_ID/$IMAGE_NAME"
+DOCKERFILE_PATH="./Dockerfile"
+APP_DIR="./src"
+
+gcloud config set project $PROJECT_ID
+gcloud auth activate-service-account --key-file=/caminho/para/minha-chave.json
+
+gcloud container clusters create $CLUSTER_NAME \
+  --zone $ZONE \
+  --num-nodes 3 \
+  --region $REGION
+
+gcloud container clusters get-credentials $CLUSTER_NAME --zone $ZONE --region $REGION
+
+cd $APP_DIR
+docker build -t $GCR_PATH -f $DOCKERFILE_PATH .
+
+gcloud auth configure-docker
+
+docker push $GCR_PATH
+
+cat <<EOF > deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: $APP_NAME
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: $APP_NAME
+  template:
+    metadata:
+      labels:
+        app: $APP_NAME
+    spec:
+      containers:
+      - name: $APP_NAME
+        image: $GCR_PATH
+        ports:
+        - containerPort: 80
+EOF
+
+kubectl apply -f deployment.yaml
+kubectl rollout status deployment/$APP_NAME
+kubectl expose deployment $APP_NAME --type=LoadBalancer --name=$APP_NAME-service
+kubectl get services $APP_NAME-service
